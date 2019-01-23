@@ -35,7 +35,7 @@ C_10,|C#_10,|D_10,|D#_10,|E_10,|F_10,|F#_10,|G_10}
 The overall pipeline is:
 
 ```
-    Jeffrey             |       Rajan                    |    Future (both) 
+    Jeffery             |       Rajan                    |    Future (both) 
                         |
 WAV File  --------->  MIDI --------> MIDI + Chord Labels ---->   Lead Sheet
                           \                                  /
