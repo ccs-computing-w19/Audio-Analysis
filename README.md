@@ -5,7 +5,8 @@
 A C++ Application that takes audio input in the form a mp3 or wav file and processes it, separating audio sources and converting it into lead sheets.
 
 
-
+---
+### Intermediate formating  
 From the wav file a series of vectors will be extracted.
 Each vector will be length 128 organized as below.
   There are ten full octaves plus 8/12ths of an octave and twelve notes per octave (except the last, which only has eight). 
