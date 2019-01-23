@@ -4,6 +4,19 @@
 
 A C++ Application that takes audio input in the form a mp3 or wav file and processes it, separating audio sources and converting it into lead sheets.
 
+---
+# Project Roles
+
+The overall pipeline is:
+
+```
+    Jeffery             |       Rajan                    |    Future (both) 
+                        |
+WAV File  --------->  MIDI --------> MIDI + Chord Labels ---->   Lead Sheet
+                          \                                  /
+                           \----> Melody isolated from MIDI /
+
+```
 
 ---
 ### Intermediate formating  
@@ -31,15 +44,4 @@ C_9,|C#_9,|D_9,|D#_9,|E_9,|F_9,|F#_9,|G_9,|G#_9,|A_9,|A_9,|B_9,
 C_10,|C#_10,|D_10,|D#_10,|E_10,|F_10,|F#_10,|G_10}
 
 
-# Project Roles
 
-The overall pipeline is:
-
-```
-    Jeffery             |       Rajan                    |    Future (both) 
-                        |
-WAV File  --------->  MIDI --------> MIDI + Chord Labels ---->   Lead Sheet
-                          \                                  /
-                           \----> Melody isolated from MIDI /
-
-```
