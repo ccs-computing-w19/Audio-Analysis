@@ -1,5 +1,7 @@
 # Audio-Analysis
 
+
+
 A C++ Application that takes audio input in the form a mp3 or wav file and processes it, separating audio sources and converting it into lead sheets.
 
 
@@ -26,3 +28,16 @@ C_7,|C#_7,|D_7,|D#_7,|E_7,|F_7,|F#_7,|G_7,|G#_7,|A_7,|A_7,|B_7,
 C_8,|C#_8,|D_8,|D#_8,|E_8,|F_8,|F#_8,|G_8,|G#_8,|A_8,|A_8,|B_8,
 C_9,|C#_9,|D_9,|D#_9,|E_9,|F_9,|F#_9,|G_9,|G#_9,|A_9,|A_9,|B_9,
 C_10,|C#_10,|D_10,|D#_10,|E_10,|F_10,|F#_10,|G_10}
+
+
+# Project Roles
+
+The overall pipeline is:
+
+```
+
+WAV File  --------->  MIDI --------> MIDI + Chord Labels ---->   Lead Sheet
+                          \                                  /
+                           \----> Melody isolated from MIDI /
+
+```
