@@ -1,5 +1,7 @@
 #include "MidiFile.h"
+#include "MidiModifier.h"
 #include <iostream>
+#include <string>
 
 using namespace std;
 using namespace smf;
@@ -10,27 +12,18 @@ int main(int argc, char** argv) {
 		return 0;
 	}
 
-	// Loads data from test.mid into a midifile object
+	// Loads data from midi file passed as argument into a midifile object
 	MidiFile midifile;
 	midifile.read(argv[1]);
 
+	// Transposes the midi file
 	int semitones = atoi(argv[2]);	
+	transpose(midifile, 3);
 
-	for(int i = 0; i < midifile.getTrackCount(); i++) {
-		for(int j = 0; j < midifile[i].getEventCount(); j++) {
-			if(!midifile[i][j].isNote()) continue;
-
-			if(midifile[i][j].getChannel() == 9) continue;
-
-			int new_note = semitones + midifile[i][j].getP1();
-			midifile[i][j].setP1(new_note);
-		}
-	}
-	
-	// Debugging, ensures that test.mid exists
-	midifile.writeHex(cout);
-
-	
+	// Writes the transposed MIDI file 
+	string transposed_file = argv[1];
+	transposed_file = transposed_file.substr(0, transposed_file.length() - 4);
+	midifile.write(transposed_file + "_transposed.mid");
 
 	return 0;
 }
