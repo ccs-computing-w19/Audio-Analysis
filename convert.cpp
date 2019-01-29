@@ -19,6 +19,9 @@ int main(int argc, char** argv) {
 	// Transposes the midi file
 	int semitones = atoi(argv[2]);	
 	transpose(midifile, 3);
+	
+	// Prints the midi file
+	midiToText(midifile);
 
 	// Writes the transposed MIDI file 
 	string transposed_file = argv[1];
