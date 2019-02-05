@@ -1,2 +1,3 @@
 *.o
 convert
+.DS_Store
