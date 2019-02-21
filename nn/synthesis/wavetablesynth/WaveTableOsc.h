@@ -1,51 +1,51 @@
-//  WaveTableOsc.h
+//  WavetableOsc.h
 
-#ifndef Test_WaveTableOsc_h
-#define Test_WaveTableOsc_h
+#ifndef Test_WavetableOsc_h
+#define Test_WavetableOsc_h
 
 #define doLinearInterp 1
 
 typedef struct {
     double topFreq;
-    int waveTableLen;
-    float *waveTable;
-} waveTable;
+    int WavetableLen;
+    float *Wavetable;
+} Wavetable;
 
-const int numWaveTableSlots = 32;
+const int numWavetableSlots = 32;
 
-class WaveTableOsc {
+class WavetableOsc {
 protected:
     double phasor;      // phase accumulator
     double phaseInc;    // phase increment
     double phaseOfs;    // phase offset for PWM
 
-    // list of wavetables
-    int numWaveTables;
-    waveTable waveTables[numWaveTableSlots];
+    // list of Wavetables
+    int numWavetables;
+    Wavetable Wavetables[numWavetableSlots];
 
 public:
-    WaveTableOsc(void);
-    ~WaveTableOsc(void);
+    WavetableOsc(void);
+    ~WavetableOsc(void);
     void setFrequency(double inc);
     void setPhaseOffset(double offset);
     void updatePhase(void);
     float getOutput(void);
     float getOutputMinusOffset(void);
-    int addWaveTable(int len, float *waveTableIn, double topFreq);
+    int addWavetable(int len, float *WavetableIn, double topFreq);
 };
 
 
-// note: if you don't keep this in the range of 0-1, you'll need to make changes elsewhere
-inline void WaveTableOsc::setFrequency(double inc) {
+// limited between 0 to 1 atm
+inline void WavetableOsc::setFrequency(double inc) {
     phaseInc = inc;
 }
 
-// note: if you don't keep this in the range of 0-1, you'll need to make changes elsewhere
-inline void WaveTableOsc::setPhaseOffset(double offset) {
+// limited between 0 to 1 atm
+inline void WavetableOsc::setPhaseOffset(double offset) {
     phaseOfs = offset;
 }
 
-inline void WaveTableOsc::updatePhase() {
+inline void WavetableOsc::updatePhase() {
     phasor += phaseInc;
 
     if (phasor >= 1.0)

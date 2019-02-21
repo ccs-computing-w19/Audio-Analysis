@@ -1,53 +1,51 @@
-//  WaveTableOsc.cpp
+//  WavetableOsc.cpp
 
-#include "WaveTableOsc.h"
+#include "WavetableOsc.h"
 
 
-WaveTableOsc::WaveTableOsc(void) {
+WavetableOsc::WavetableOsc(void) {
     phasor = 0.0;
     phaseInc = 0.0;
     phaseOfs = 0.5;
-    numWaveTables = 0;
-    for (int idx = 0; idx < numWaveTableSlots; idx++) {
-        waveTables[idx].topFreq = 0;
-        waveTables[idx].waveTableLen = 0;
-        waveTables[idx].waveTable = 0;
+    numWavetables = 0;
+    for (int idx = 0; idx < numWavetableSlots; idx++) {
+        Wavetables[idx].topFreq = 0;
+        Wavetables[idx].WavetableLen = 0;
+        Wavetables[idx].Wavetable = 0;
     }
 }
 
 
-WaveTableOsc::~WaveTableOsc(void) {
-    for (int idx = 0; idx < numWaveTableSlots; idx++) {
-        float *temp = waveTables[idx].waveTable;
+WavetableOsc::~WavetableOsc(void) {
+    for (int idx = 0; idx < numWavetableSlots; idx++) {
+        float *temp = Wavetables[idx].Wavetable;
         if (temp != 0)
             delete [] temp;
     }
 }
 
 
+// addWavetable
+// add Wavetables in order of lowest frequency to highest
+// topFreq is the highest frequency supported by a Wavetable
+// Wavetables within an oscillator can be different lengths
 //
-// addWaveTable
+// returns 0 upon success, or the number of Wavetables if no more room is available
 //
-// add wavetables in order of lowest frequency to highest
-// topFreq is the highest frequency supported by a wavetable
-// wavetables within an oscillator can be different lengths
-//
-// returns 0 upon success, or the number of wavetables if no more room is available
-//
-int WaveTableOsc::addWaveTable(int len, float *waveTableIn, double topFreq) {
-    if (this->numWaveTables < numWaveTableSlots) {
-        float *waveTable = this->waveTables[this->numWaveTables].waveTable = new float[len];
-        this->waveTables[this->numWaveTables].waveTableLen = len;
-        this->waveTables[this->numWaveTables].topFreq = topFreq;
-        ++this->numWaveTables;
+int WavetableOsc::addWavetable(int len, float *WavetableIn, double topFreq) {
+    if (this->numWavetables < numWavetableSlots) {
+        float *Wavetable = this->Wavetables[this->numWavetables].Wavetable = new float[len];
+        this->Wavetables[this->numWavetables].WavetableLen = len;
+        this->Wavetables[this->numWavetables].topFreq = topFreq;
+        ++this->numWavetables;
 
         // fill in wave
         for (long idx = 0; idx < len; idx++)
-            waveTable[idx] = waveTableIn[idx];
+            Wavetable[idx] = WavetableIn[idx];
 
         return 0;
     }
-    return this->numWaveTables;
+    return this->numWavetables;
 }
 
 
@@ -56,26 +54,26 @@ int WaveTableOsc::addWaveTable(int len, float *waveTableIn, double topFreq) {
 //
 // returns the current oscillator output
 //
-float WaveTableOsc::getOutput() {
-    // grab the appropriate wavetable
-    int waveTableIdx = 0;
-    while ((this->phaseInc >= this->waveTables[waveTableIdx].topFreq) && (waveTableIdx < (this->numWaveTables - 1))) {
-        ++waveTableIdx;
+float WavetableOsc::getOutput() {
+    // grab the appropriate Wavetable
+    int WavetableIdx = 0;
+    while ((this->phaseInc >= this->Wavetables[WavetableIdx].topFreq) && (WavetableIdx < (this->numWavetables - 1))) {
+        ++WavetableIdx;
     }
-    waveTable *waveTable = &this->waveTables[waveTableIdx];
+    Wavetable *Wavetable = &this->Wavetables[WavetableIdx];
 
 #if !doLinearInterp
     // truncate
-    return waveTable->waveTable[int(this->phasor * waveTable->waveTableLen)];
+    return Wavetable->Wavetable[int(this->phasor * Wavetable->WavetableLen)];
 #else
     // linear interpolation
-    double temp = this->phasor * waveTable->waveTableLen;
+    double temp = this->phasor * Wavetable->WavetableLen;
     int intPart = temp;
     double fracPart = temp - intPart;
-    float samp0 = waveTable->waveTable[intPart];
-    if (++intPart >= waveTable->waveTableLen)
+    float samp0 = Wavetable->Wavetable[intPart];
+    if (++intPart >= Wavetable->WavetableLen)
         intPart = 0;
-    float samp1 = waveTable->waveTable[intPart];
+    float samp1 = Wavetable->Wavetable[intPart];
 
     return samp0 + (samp1 - samp0) * fracPart;
 #endif
@@ -90,42 +88,42 @@ float WaveTableOsc::getOutput() {
 //
 // returns the current oscillator output
 //
-float WaveTableOsc::getOutputMinusOffset() {
-    // grab the appropriate wavetable
-    int waveTableIdx = 0;
-    while ((this->phaseInc >= this->waveTables[waveTableIdx].topFreq) && (waveTableIdx < (this->numWaveTables - 1))) {
-        ++waveTableIdx;
+float WavetableOsc::getOutputMinusOffset() {
+    // grab the appropriate Wavetable
+    int WavetableIdx = 0;
+    while ((this->phaseInc >= this->Wavetables[WavetableIdx].topFreq) && (WavetableIdx < (this->numWavetables - 1))) {
+        ++WavetableIdx;
     }
-    waveTable *waveTable = &this->waveTables[waveTableIdx];
+    Wavetable *Wavetable = &this->Wavetables[WavetableIdx];
 
 #if !doLinearInterp
     // truncate
     double offsetPhasor = this->phasor + this->phaseOfs;
     if (offsetPhasor >= 1.0)
         offsetPhasor -= 1.0;
-    return waveTable->waveTable[int(this->phasor * waveTable->waveTableLen)] - waveTable->waveTable[int(offsetPhasor * waveTable->waveTableLen)];
+    return Wavetable->Wavetable[int(this->phasor * Wavetable->WavetableLen)] - Wavetable->Wavetable[int(offsetPhasor * Wavetable->WavetableLen)];
 #else
     // linear
-    double temp = this->phasor * waveTable->waveTableLen;
+    double temp = this->phasor * Wavetable->WavetableLen;
     int intPart = temp;
     double fracPart = temp - intPart;
-    float samp0 = waveTable->waveTable[intPart];
-    if (++intPart >= waveTable->waveTableLen)
+    float samp0 = Wavetable->Wavetable[intPart];
+    if (++intPart >= Wavetable->WavetableLen)
         intPart = 0;
-    float samp1 = waveTable->waveTable[intPart];
+    float samp1 = Wavetable->Wavetable[intPart];
     float samp = samp0 + (samp1 - samp0) * fracPart;
 
     // and linear again for the offset part
     double offsetPhasor = this->phasor + this->phaseOfs;
     if (offsetPhasor > 1.0)
         offsetPhasor -= 1.0;
-    temp = offsetPhasor * waveTable->waveTableLen;
+    temp = offsetPhasor * Wavetable->WavetableLen;
     intPart = temp;
     fracPart = temp - intPart;
-    samp0 = waveTable->waveTable[intPart];
-    if (++intPart >= waveTable->waveTableLen)
+    samp0 = Wavetable->Wavetable[intPart];
+    if (++intPart >= Wavetable->WavetableLen)
         intPart = 0;
-    samp1 = waveTable->waveTable[intPart];
+    samp1 = Wavetable->Wavetable[intPart];
 
     return samp - (samp0 + (samp1 - samp0) * fracPart);
 #endif

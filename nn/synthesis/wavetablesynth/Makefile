@@ -1,7 +1,10 @@
 all: TW
 
-TW: main.cpp WaveTableOsc.cpp
-	g++ -std=c++11 -o testwav main.cpp WaveTableOsc.cpp
+TW: main.cpp WavetableOsc.cpp
+	g++ -std=c++11 -o testwav mainEnum.cpp WavetableOsc.cpp
+
+TWold: main.cpp WavetableOsc.cpp
+		g++ -std=c++11 -o testwav main.cpp WavetableOsc.cpp
 
 clean:
-	rm -f TW
+	rm -f TW TW2

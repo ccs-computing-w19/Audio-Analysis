@@ -422,6 +422,17 @@ inline void write2Bytes(uint32_t val, uint8_t **bytePtr) {
 	*(*bytePtr)++ = val >> 8;
 }
 
+
+enum {
+    /* writeFourCC() */
+    RIFF = 0x52494646,
+    WAVE = 0x57415645,
+    fmt  = 0x666d7420,
+    fact = 0x66616374,
+    data = 0x64617461,
+};
+
+
 void writeFloatSound(int len, float *wave) {
 	const int numChannels = 1;
 
@@ -433,13 +444,10 @@ void writeFloatSound(int len, float *wave) {
 	uint8_t *bytePtr = bytes;
 
 
-
-
-
-    writeFourCC(0x52494646, &bytePtr);                      //'RIFF'
+    writeFourCC(RIFF, &bytePtr);
     write4Bytes(4 + 26 + 12 + 8 + soundChunkLen, &bytePtr); // chunk size
-    writeFourCC(0x57415645, &bytePtr);                      //'WAVE'
-    writeFourCC(0x666d7420, &bytePtr);                      //'fmt '
+    writeFourCC(WAVE, &bytePtr);
+    writeFourCC(fmt , &bytePtr);
     write4Bytes(18, &bytePtr);                              // size of subchunk that follows
     write2Bytes(WAVE_FORMAT_IEEE_FLOAT, &bytePtr);          // format
     write2Bytes(numChannels, &bytePtr);                     // number of channels
@@ -448,10 +456,10 @@ void writeFloatSound(int len, float *wave) {
     write2Bytes(numChannels * bytesPersample, &bytePtr);    // block align
     write2Bytes(bytesPersample * 8, &bytePtr);              // bits per sample
     write2Bytes(0, &bytePtr);                               // cbSize
-    writeFourCC(0x66616374, &bytePtr);                     //'fact'
+    writeFourCC(fact, &bytePtr);
     write4Bytes(4, &bytePtr);                               // size of subchunk that follows
     write4Bytes(numChannels * len, &bytePtr);               // size of subchunk that follows
-	  writeFourCC(0x64617461, &bytePtr);                        //'data'
+	  writeFourCC(data, &bytePtr);
     write4Bytes(len * numChannels * bytesPersample, &bytePtr); // subchunk size
 
 	// write array to file
